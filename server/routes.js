@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { delay } = require("./helpers");
+// const { delay } = require("./helpers");
 
 const NUM_OF_ROWS = 8;
 const SEATS_PER_ROW = 12;
@@ -48,7 +48,7 @@ router.get("/api/seat-availability", async (req, res) => {
     };
   }
 
-  await delay(Math.random() * 3000);
+  // await delay(Math.random() * 3000);
 
   return res.json({
     seats: seats,
