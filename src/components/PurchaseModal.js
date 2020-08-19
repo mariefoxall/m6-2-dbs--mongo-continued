@@ -4,23 +4,23 @@
 // Ultimately it doesn't make much difference; the strategy was
 // changed because Material UI seemed like a little bit less work,
 // but both approaches are totally valid!
-import React from 'react';
-import styled from 'styled-components';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from "react";
+import styled from "styled-components";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-import { decodeSeatId } from '../helpers';
+import { decodeSeatId } from "../helpers";
 
-import Modal from './Modal';
-import Spacer from './Spacer';
-import { BookingContext } from './BookingContext';
-import { SeatContext } from './SeatContext';
+import Modal from "./Modal";
+import Spacer from "./Spacer";
+import { BookingContext } from "./BookingContext";
+import { SeatContext } from "./SeatContext";
 
 const PurchaseModal = () => {
   const {
@@ -39,10 +39,10 @@ const PurchaseModal = () => {
     actions: { markSeatAsPurchased },
   } = React.useContext(SeatContext);
 
-  const [fullName, setFullName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [creditCard, setCreditCard] = React.useState('');
-  const [expiration, setExpiration] = React.useState('');
+  const [fullName, setFullName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [creditCard, setCreditCard] = React.useState("");
+  const [expiration, setExpiration] = React.useState("");
 
   const { rowName, seatNum } = decodeSeatId(selectedSeatId);
 
@@ -50,15 +50,15 @@ const PurchaseModal = () => {
     <Modal
       isOpen={!!selectedSeatId}
       onClose={cancelBookingProcess}
-      aria-label='Ticket purchasing flow'
-      style={{ padding: '2rem 2rem 0' }}
+      aria-label="Ticket purchasing flow"
+      style={{ padding: "2rem 2rem 0" }}
     >
       <Title>Purchase ticket</Title>
       <p>
         You're purchasing <strong>1</strong> ticket for the price of ${price}.
       </p>
 
-      <TicketTable aria-label='ticket information'>
+      <TicketTable aria-label="ticket information">
         <TableHead>
           <TableRow>
             <TableCell>Row</TableCell>
@@ -81,10 +81,10 @@ const PurchaseModal = () => {
 
           purchaseTicketRequest();
 
-          fetch('/api/book-seat', {
-            method: 'POST',
+          fetch("/api/book-seat", {
+            method: "PUT",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               fullName,
@@ -105,25 +105,25 @@ const PurchaseModal = () => {
             })
             .catch((err) => {
               console.error(err);
-              purchaseTicketFailure('An unknown error has occurred');
+              purchaseTicketFailure("An unknown error has occurred");
             });
         }}
       >
         <h3>Enter payment details</h3>
         <Row>
           <TextField
-            variant='outlined'
-            label='Full name'
-            type='text'
+            variant="outlined"
+            label="Full name"
+            type="text"
             value={fullName}
             onChange={(ev) => setFullName(ev.currentTarget.value)}
             style={{ flex: 1 }}
           />
           <Spacer size={16} />
           <TextField
-            variant='outlined'
-            label='Email'
-            type='text'
+            variant="outlined"
+            label="Email"
+            type="text"
             value={email}
             onChange={(ev) => setEmail(ev.currentTarget.value)}
             style={{ flex: 1 }}
@@ -131,28 +131,28 @@ const PurchaseModal = () => {
         </Row>
         <Row>
           <TextField
-            variant='outlined'
-            label='Credit card'
-            type='text'
+            variant="outlined"
+            label="Credit card"
+            type="text"
             value={creditCard}
             onChange={(ev) => setCreditCard(ev.currentTarget.value)}
             style={{ flex: 2 }}
           />
           <Spacer size={16} />
           <TextField
-            variant='outlined'
-            label='Expiration'
-            type='text'
+            variant="outlined"
+            label="Expiration"
+            type="text"
             value={expiration}
             onChange={(ev) => setExpiration(ev.currentTarget.value)}
             style={{ flex: 1 }}
           />
           <Spacer size={16} />
-          <PurchaseButton variant='contained' color='primary' type='submit'>
-            {status === 'awaiting-response' ? (
-              <CircularProgress size={24} color='inherit' />
+          <PurchaseButton variant="contained" color="primary" type="submit">
+            {status === "awaiting-response" ? (
+              <CircularProgress size={24} color="inherit" />
             ) : (
-              'Purchase'
+              "Purchase"
             )}
           </PurchaseButton>
         </Row>
