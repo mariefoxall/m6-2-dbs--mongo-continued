@@ -40,11 +40,17 @@ const getSeats = async (req, res) => {
 
 const bookSeat = async (req, res) => {
   const client = await MongoClient(MONGO_URI, options);
-  const { seatId, creditCard, expiration } = req.body;
+  const { seatId, creditCard, expiration, fullName, email } = req.body;
   //   let lastBookingAttemptSucceeded = false;
   console.log(seatId);
   const _id = seatId;
 
+  if (!creditCard || !expiration) {
+    return res.status(400).json({
+      status: 400,
+      message: "Please provide credit card information!",
+    });
+  }
   try {
     const query = { _id };
     const bookedSeat = { $set: { isBooked: true } };
@@ -53,7 +59,8 @@ const bookSeat = async (req, res) => {
     const thisSeat = await db.collection("seats").findOne(query);
     console.log(thisSeat);
 
-    if (thisSeat.isbooked) {
+    if (thisSeat.isBooked) {
+      console.log("hellooooooooo");
       return res.status(400).json({
         message: "This seat has already been booked!",
       });
@@ -64,15 +71,14 @@ const bookSeat = async (req, res) => {
     assert.equal(1, r.matchedCount);
     assert.equal(1, r.modifiedCount);
 
-    // res.status(200).json({ status: 200, data: seatId, ...req.body });
-    // const isAlreadyBooked = !!state.bookedSeats[seatId];
+    // res.status(200).json({ status: 200, success: true, data: seatId });
 
-    if (!creditCard || !expiration) {
-      return res.status(400).json({
-        status: 400,
-        message: "Please provide credit card information!",
-      });
-    }
+    const add = await db.collection("users").insertOne(req.body);
+    assert.equal(1, add.insertedCount);
+    res
+      .status(201)
+      .json({ status: 201, data: { bookedSeat: seatId, ...req.body } });
+    // const isAlreadyBooked = !!state.bookedSeats[seatId];
 
     // if (lastBookingAttemptSucceeded) {
     //   lastBookingAttemptSucceeded = !lastBookingAttemptSucceeded;
@@ -83,17 +89,42 @@ const bookSeat = async (req, res) => {
     // }
 
     // lastBookingAttemptSucceeded = !lastBookingAttemptSucceeded;
-
-    // state.bookedSeats[seatId] = true;
-
-    return res.status(200).json({
-      status: 200,
-      success: true,
-    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ status: 500, data: seatId, message: error.message });
   }
 };
 
-module.exports = { getSeats, bookSeat };
+const cancelBooking = async (req, res) => {
+  const _id = req.body._id;
+  console.log(_id);
+
+  const client = await MongoClient(MONGO_URI, options);
+  try {
+    await client.connect();
+    const db = client.db("mongo_workshop_2");
+    const query = { _id };
+    const unbookSeat = { $set: { isBooked: false } };
+
+    const thisSeat = await db.collection("seats").findOne(query);
+    console.log(thisSeat);
+
+    if (!thisSeat.isBooked) {
+      return res.status(400).json({
+        message: "This seat has not been booked!",
+      });
+    }
+    // } else {
+    const r = await db.collection("seats").updateOne(query, unbookSeat);
+    assert.equal(1, r.matchedCount);
+    assert.equal(1, r.modifiedCount);
+
+    res.status(200).json({ status: 200, success: true, data: _id });
+    // }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: 500, data: _id, message: error.message });
+  }
+};
+
+module.exports = { getSeats, bookSeat, cancelBooking };

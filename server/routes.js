@@ -1,4 +1,4 @@
-const { getSeats, bookSeat } = require("./handlers");
+const { getSeats, bookSeat, cancelBooking } = require("./handlers");
 
 const router = require("express").Router();
 // const { delay } = require("./helpers");
@@ -45,6 +45,8 @@ let state;
 
 router.get("/api/seat-availability", getSeats);
 
-router.put("/api/book-seat/", bookSeat);
+router.put("/api/book-seat", bookSeat);
+
+router.put("/api/cancel-booking", cancelBooking);
 
 module.exports = router;
